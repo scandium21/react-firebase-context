@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+// React Router node package offers a higher-order component
+// to make the router properties accessible in the props of a component
+// Any component that goes in the withRouter() higher-order component
+// gains access to all the properties of the router
+import { Link, withRouter } from "react-router-dom";
+import { compose } from "recompose";
 
+import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
 const INITIAL_STATE = {
@@ -20,14 +26,17 @@ const SignUpPage = props => {
   );
 };
 
-const SignUpForm = props => {
+const SignUpFormBase = props => {
   const [state, setState] = useState(INITIAL_STATE);
   const onSubmit = e => {
     e.preventDefault();
     const { username, email, passwordOne } = state;
     props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => setState(INITIAL_STATE))
+      .then(authUser => {
+        setState(INITIAL_STATE);
+        props.history.push(ROUTES.HOME);
+      })
       .catch(error => {
         setState({ ...state, error });
       });
@@ -78,6 +87,9 @@ const SignUpForm = props => {
     </form>
   );
 };
+
+//the compose function applies the higher-order components from right to left
+const SignUpForm = compose(withRouter, withFirebase)(SignUpFormBase);
 
 const SignUpLink = () => {
   return (
