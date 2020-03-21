@@ -22,7 +22,16 @@ const SignUpPage = props => {
 
 const SignUpForm = props => {
   const [state, setState] = useState(INITIAL_STATE);
-  const onSubmit = () => {};
+  const onSubmit = e => {
+    e.preventDefault();
+    const { username, email, passwordOne } = state;
+    props.firebase
+      .doCreateUserWithEmailAndPassword(email, passwordOne)
+      .then(authUser => setState(INITIAL_STATE))
+      .catch(error => {
+        setState({ ...state, error });
+      });
+  };
   const onChange = e => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
