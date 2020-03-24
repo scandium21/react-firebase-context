@@ -5,7 +5,7 @@ import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
 import { AuthUserContext } from "../Session";
 
-// Regarding components, everything is set to fulfil
+// Regarding components, everything is set to fulfill
 // a full authentication roundtrip.
 // Users can sign up (register), sign in (login), and sign out (logout).
 
