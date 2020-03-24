@@ -1,7 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
+
+// Regarding components, everything is set to fulfil
+// a full authentication roundtrip.
+// Users can sign up (register), sign in (login), and sign out (logout).
 
 const Navigation = () => {
   return (
@@ -21,6 +26,9 @@ const Navigation = () => {
         </li>
         <li>
           <Link to={ROUTES.ADMIN}>Admin</Link>
+        </li>
+        <li>
+          <SignOutButton />
         </li>
       </ul>
     </div>
