@@ -23,6 +23,7 @@ const INITIAL_STATE = {
 const SignInFormBase = props => {
   const [state, setState] = useState(INITIAL_STATE);
   const onSubmit = e => {
+    e.preventDefault();
     const { email, password } = state;
     props.firebase
       .doSignInWithEmailAndPassword(email, password)

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import Navigation from "../Navigation";
@@ -11,12 +11,24 @@ import AccountPage from "../Account";
 import AdminPage from "../Admin";
 
 import * as ROUTES from "../../constants/routes";
+import { withFirebase } from "../Firebase";
 
-const App = () => {
+const App = props => {
+  const [authUser, setAuthUser] = useState(null);
+
+  useEffect(() => {
+    // onAuthStateChanged() receives a function as parameter
+    // that has access to the authenticated user
+    // the passed function is called every time something changes for the authenticated user
+    // It is called when a user signs up, signs in, and signs out
+    props.firebase.auth.onAuthStateChanged(authUser => {
+      authUser ? setAuthUser(authUser) : setAuthUser(null);
+    });
+  }, []);
   return (
     <Router>
       <div>
-        <Navigation />
+        <Navigation authUser={authUser} />
         <hr />
         <Route path={ROUTES.LANDING} component={LandingPage} exact />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
@@ -30,4 +42,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withFirebase(App);

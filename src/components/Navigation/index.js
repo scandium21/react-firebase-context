@@ -8,7 +8,11 @@ import * as ROUTES from "../../constants/routes";
 // a full authentication roundtrip.
 // Users can sign up (register), sign in (login), and sign out (logout).
 
-const Navigation = () => {
+const Navigation = ({ authUser }) => (
+  <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
+);
+
+const NavigationAuth = () => {
   return (
     <div>
       <ul>
@@ -34,5 +38,16 @@ const Navigation = () => {
     </div>
   );
 };
+
+const NavigationNonAuth = () => (
+  <ul>
+    <li>
+      <Link to={ROUTES.LANDING}>Landing</Link>
+    </li>
+    <li>
+      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+    </li>
+  </ul>
+);
 
 export default Navigation;
