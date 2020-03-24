@@ -3,13 +3,18 @@ import { Link } from "react-router-dom";
 
 import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
+import { AuthUserContext } from "../Session";
 
 // Regarding components, everything is set to fulfil
 // a full authentication roundtrip.
 // Users can sign up (register), sign in (login), and sign out (logout).
 
 const Navigation = ({ authUser }) => (
-  <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
+  <div>
+    <AuthUserContext.Consumer>
+      {authUser => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
+    </AuthUserContext.Consumer>
+  </div>
 );
 
 const NavigationAuth = () => {
