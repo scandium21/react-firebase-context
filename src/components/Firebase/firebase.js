@@ -20,6 +20,7 @@ class Firebase {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     this.auth = firebase.auth();
+    this.db = firebase.database();
   }
 
   /** Auth API */
@@ -34,5 +35,16 @@ class Firebase {
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
   doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
+
+  /** User API */
+  user = uid => this.db.ref(`users/${uid}`);
+  users = () => this.db.ref(`users`);
 }
+
+// The paths follow the REST philosophy where every entity (e.g. user,
+// message, book, author) is associated with a URI,
+// and HTTP methods are used to create, update, delete and get entities.
+// In Firebase, the RESTful URI becomes a simple path,
+// and the HTTP methods become Firebase's API.
+
 export default Firebase;
