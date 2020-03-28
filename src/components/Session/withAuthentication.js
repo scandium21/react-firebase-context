@@ -11,9 +11,17 @@ const withAuthentication = Component => {
       // that has access to the authenticated user
       // the passed function is called every time something changes for the authenticated user
       // It is called when a user signs up, signs in, and signs out
-      props.firebase.auth.onAuthStateChanged(authUser => {
-        authUser ? setAuthUser(authUser) : setAuthUser(null);
-      });
+      const listener = props.firebase.onAuthUserListener(
+        authUser => {
+          setAuthUser(authUser);
+        },
+        () => {
+          setAuthUser(null);
+        }
+      );
+      return function cleanup() {
+        listener();
+      };
     }, []);
     return (
       <AuthUserContext.Provider value={authUser}>

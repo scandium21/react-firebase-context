@@ -8,12 +8,14 @@ import { compose } from "recompose";
 
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import * as ROLES from "../../constants/roles";
 
 const INITIAL_STATE = {
   username: "",
   email: "",
   passwordOne: "",
   passwordTwo: "",
+  isAdmin: false,
   error: null
 };
 
@@ -28,16 +30,20 @@ const SignUpPage = props => {
 
 const SignUpFormBase = props => {
   const [state, setState] = useState(INITIAL_STATE);
+  const { username, email, passwordOne, passwordTwo, isAdmin, error } = state;
   const onSubmit = e => {
     e.preventDefault();
-    const { username, email, passwordOne } = state;
+    const { username, email, passwordOne, isAdmin } = state;
+    const roles = {};
+    if (isAdmin) roles[ROLES.ADMIN] = ROLES.ADMIN;
     props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         // create a user in Firebase database
         return props.firebase.user(authUser.user.uid).set({
           username,
-          email
+          email,
+          roles
         });
       })
       .then(() => {
@@ -51,7 +57,9 @@ const SignUpFormBase = props => {
   const onChange = e => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
-  const { username, email, passwordOne, passwordTwo, error } = state;
+  const onChangeCheckbox = e => {
+    setState({ ...state, [e.target.name]: e.target.checked });
+  };
   const isInvalid =
     passwordOne !== passwordTwo ||
     passwordOne === "" ||
@@ -87,6 +95,16 @@ const SignUpFormBase = props => {
         onChange={onChange}
         placeholder="Confirm Password"
       />
+      <label htmlFor="admin">
+        Admin:
+        <input
+          name="isAdmin"
+          type="checkbox"
+          id="admin"
+          checked={isAdmin}
+          onChange={onChangeCheckbox}
+        />
+      </label>
       <button disabled={isInvalid} type="submit">
         Sign Up
       </button>
