@@ -7,6 +7,12 @@ import { PasswordForgetLink } from "../PasswordForget";
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
+const ERROR_CODE_ACCOUNT_EXISTS =
+  "auth/account-exists-with-different-credential";
+
+const ERROR_MSG_ACCOUNT_EXISTS = `An account with an E-Mail address to this social account already exists. Try to login from this account instead and associate your social accounts on your personal account page.
+`;
+
 const SignInPage = () => (
   <div>
     <h1>SignIn</h1>
@@ -37,6 +43,8 @@ const SignInFormBase = props => {
         props.history.push(ROUTES.HOME);
       })
       .catch(error => {
+        if (error.code === ERROR_CODE_ACCOUNT_EXISTS)
+          error.message = ERROR_MSG_ACCOUNT_EXISTS;
         setState({ error });
       });
   };
@@ -88,7 +96,11 @@ const SignInGoogleBase = props => {
         setState({ error: null });
         props.history.push(ROUTES.HOME);
       })
-      .catch(error => setState({ error }));
+      .catch(error => {
+        if (error.code === ERROR_CODE_ACCOUNT_EXISTS)
+          error.message = ERROR_MSG_ACCOUNT_EXISTS;
+        setState({ error });
+      });
   };
   return (
     <form onSubmit={onSubmit}>
@@ -116,7 +128,11 @@ const SignInFacebookBase = props => {
         setError(null);
         props.history.push(ROUTES.HOME);
       })
-      .catch(error => setError(error));
+      .catch(error => {
+        if (error.code === ERROR_CODE_ACCOUNT_EXISTS)
+          error.message = ERROR_MSG_ACCOUNT_EXISTS;
+        setError({ error });
+      });
   };
   return (
     <form onSubmit={onSubmit}>
@@ -126,24 +142,29 @@ const SignInFacebookBase = props => {
   );
 };
 
-const SignInTwitterBase = ({ firebase, history }) => {
+const SignInTwitterBase = props => {
   const [error, setError] = useState(null);
   const onSubmit = e => {
     e.preventDefault();
-    firebase
+    props.firebase
       .doSignInWithTwitter()
       .then(socialAuthUser => {
-        return firebase.user(socialAuthUser.user.uid).set({
-          username: socialAuthUser.additionalUserInfo.profile.name,
-          email: socialAuthUser.additionalUserInfo.profile.email,
+        console.log(socialAuthUser);
+        return props.firebase.user(socialAuthUser.user.uid).set({
+          username: socialAuthUser.user.displayName,
+          email: socialAuthUser.user.email,
           roles: {}
         });
       })
       .then(() => {
         setError(null);
-        history.push(ROUTES.HOME);
+        props.history.push(ROUTES.HOME);
       })
-      .catch(error => setError(error));
+      .catch(error => {
+        if (error.code === ERROR_CODE_ACCOUNT_EXISTS)
+          error.message = ERROR_MSG_ACCOUNT_EXISTS;
+        setError({ error });
+      });
   };
   return (
     <form onSubmit={onSubmit}>
