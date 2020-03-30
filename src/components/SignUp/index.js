@@ -56,6 +56,9 @@ const SignUpFormBase = props => {
         });
       })
       .then(() => {
+        return props.firebase.doSendEmailVerification();
+      })
+      .then(() => {
         setState(INITIAL_STATE);
         props.history.push(ROUTES.HOME);
       })
