@@ -35,6 +35,11 @@ const UserItemBase = props => {
     ...props.location.state
   });
   const { user, loading } = state;
+
+  const onSendPasswordResetEmail = () => {
+    props.firebase.doPasswordReset(state.user.email);
+  };
+
   useEffect(() => {
     // If users navigate from the UserList to the UserItem component, should arrive immediately.
     if (state.user) return;
@@ -65,6 +70,9 @@ const UserItemBase = props => {
           </span>
           <span>
             <strong>Username:</strong> {user.username}
+          </span>
+          <span>
+            <button onClick={onSendPasswordResetEmail}>Reset Password</button>
           </span>
         </div>
       )}
@@ -138,3 +146,6 @@ export default compose(
   withAuthorization(condition),
   withFirebase
 )(Admin);
+
+// study Firebase's Admin SDK to do delete user from Firebase's auth, change email address...
+// https://firebase.google.com/docs/auth/admin/
