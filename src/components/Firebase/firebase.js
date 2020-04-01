@@ -78,6 +78,10 @@ class Firebase {
         fallback();
       }
     });
+
+  /** Message API */
+  message = uid => this.db.ref(`messages/${uid}`);
+  messages = () => this.db.ref("messages");
 }
 
 // The paths follow the REST philosophy where every entity (e.g. user,
