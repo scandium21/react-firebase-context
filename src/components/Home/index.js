@@ -17,9 +17,12 @@ const Home = () => {
 const MessagesBase = props => {
   const [state, setState] = useState({
     loading: false,
-    messages: []
+    messages: [],
+    text: ""
   });
-  const { messages, loading } = state;
+
+  const { messages, loading, text } = state;
+
   useEffect(() => {
     setState({ ...state, loading: true });
     props.firebase.messages().on("value", snapshot => {
@@ -35,10 +38,23 @@ const MessagesBase = props => {
         setState({ messages: null, loading: false });
       }
     });
+
     return () => {
       props.firebase.messages().off();
     };
   }, []);
+
+  const onChangeText = e => {
+    setState({ ...state, text: e.target.value });
+  };
+
+  const onCreateMessage = e => {
+    e.preventDefault();
+    props.firebase.messages().push({
+      text: state.text
+    });
+  };
+
   return (
     <div>
       {loading && <div>Loading...</div>}
@@ -47,6 +63,10 @@ const MessagesBase = props => {
       ) : (
         <div>There are no messages...</div>
       )}
+      <form onSubmit={onCreateMessage}>
+        <input type="text" value={text} onChange={onChangeText} />
+        <button>Send</button>
+      </form>
     </div>
   );
 };
